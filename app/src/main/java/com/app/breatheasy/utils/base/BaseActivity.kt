@@ -12,8 +12,13 @@ package com.app.breatheasy.utils.base
 
 import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
+import com.app.breatheasy.utils.Preference
 
 open class BaseActivity : AppCompatActivity() {
+
+
+    open val preference by lazy { Preference(this)}
+
     /**
      * Function that can be used to avoid multi times click on a button/icon
      * @return true if click can be considered,

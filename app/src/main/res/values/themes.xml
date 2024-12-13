@@ -7,4 +7,15 @@
     </style>
 
     <style name="Theme.BreathEasy" parent="Base.Theme.BreathEasy" />
+
+    <style name="DialogBounceAnimation">
+        <item name="android:windowEnterAnimation">@anim/bounce_in_animation</item>
+        <item name="android:windowExitAnimation">@anim/bounce_out_animation</item>
+    </style>
+
+    <style name="FullScreenDialogTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 </resources>

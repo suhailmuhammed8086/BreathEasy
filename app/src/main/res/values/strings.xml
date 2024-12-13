@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Breath Easy</string>
+    <string name="home_description">Your daily guide to relaxation and mindfullness.</string>
+    <string name="benefits">Benefits</string>
 </resources>

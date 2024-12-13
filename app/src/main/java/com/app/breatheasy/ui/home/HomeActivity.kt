@@ -1,11 +1,13 @@
 package com.app.breatheasy.ui.home
 
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.breatheasy.R
 import com.app.breatheasy.adapter.BreathModesAdapter
@@ -14,18 +16,22 @@ import com.app.breatheasy.enums.BreathMode
 import com.app.breatheasy.model.BreathModeModel
 import com.app.breatheasy.ui.session.BreathSessionActivity
 import com.app.breatheasy.utils.base.BaseActivity
+import com.app.breatheasy.utils.dialogs.Dialogs
+import com.app.breatheasy.utils.getBlurredImageOfActivity
 
 class HomeActivity : BaseActivity(), BreathModesAdapter.Listener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var breathModeAdapter: BreathModesAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            binding.topGuideLine.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                guideBegin = systemBars.top
+            }
             insets
         }
         initView()
@@ -41,39 +47,46 @@ class HomeActivity : BaseActivity(), BreathModesAdapter.Listener {
 
     override fun onModeClick(type: BreathMode) {
         avoidMultipleClick {
-            BreathSessionActivity.start(this, type)
+            if (preference.isModeInfoShown(type)) {
+                BreathSessionActivity.start(this, type)
+            } else {
+                onInfoClick(type)
+                preference.setIsModeInfoShown(type)
+            }
         }
     }
 
     override fun onInfoClick(type: BreathMode) {
-
+        avoidMultipleClick {
+            Dialogs.showBreathModeInfoDialog(
+                this,
+                type,
+                onStartSessionClick = { onModeClick(type) },
+                onShow = {
+                    binding.root.foreground = BitmapDrawable(resources, getBlurredImageOfActivity(binding.root))
+                }, onDismiss = {
+                    binding.root.foreground = null
+                })
+        }
     }
 
     private fun getBreathModes(): List<BreathModeModel> {
         return listOf(
             BreathModeModel(
                 BreathMode.DIAPHRAGMATIC_BREATHING,
-                "Diaphragmatic Breathing",
-                "Reduces stress and promotes relaxation.",
-                R.drawable.img_one
+                description = "Reduces stress and promotes relaxation."
             ),
             BreathModeModel(
                 BreathMode.BOX_BREATHING,
-                "Box Breathing",
-                "Enhances focus and calms the mind.",
-                R.drawable.img_four
+                description = "Enhances focus and calms the mind."
             ),
             BreathModeModel(
                 BreathMode.FOUR_7_8_BREATHING,
-                "4-7-8 Breathing",
-                "Improves sleep and lowers anxiety.",
-                R.drawable.img_five
+                description = "Improves sleep and lowers anxiety."
             ),
             BreathModeModel(
                 BreathMode.ALTERNATE_NOSTRIL_BREATHING,
-                "Alternate Nostril Breathing",
-                "Balances the mind and relieves tension",
-                R.drawable.img_two
+                description = "Balances the mind and relieves tension"
             ),
         )
     }

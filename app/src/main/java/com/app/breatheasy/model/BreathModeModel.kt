@@ -14,8 +14,8 @@ import com.app.breatheasy.enums.BreathMode
 
 data class BreathModeModel(
     val type: BreathMode,
-    val name: String,
+    val name: String = type.getTitle(),
     val description: String,
-    val imageRes: Int,
+    val imageRes: Int = type.getImageRes(),
 ) {
 }
